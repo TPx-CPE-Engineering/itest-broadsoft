@@ -308,4 +308,4 @@ def set_enterprise_voice_vpn(enterprise_name):
 
 
 if __name__ == '__main__':
-    set_enterprise_voice_vpn(enterprise_name='TPAC-LabG6-2')
+    delete_all_user_schedules(phone_number='7025634891')

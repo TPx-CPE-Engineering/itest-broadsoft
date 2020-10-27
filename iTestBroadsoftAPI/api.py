@@ -22,6 +22,10 @@ class ITestBroadworksAPI(BroadworksAPI):
         response = self.command('UserScheduleGetListRequest',
                                 user_id=user_id)
 
+        # if theres no schedules return
+        if not response.schedule_name:
+            return
+
         schedule_keys_to_del = []
         for schedule_name, schedule_type in zip(response.schedule_name, response.schedule_type):
             schedule_keys_to_del.append(ScheduleKey(schedule_name=schedule_name,
