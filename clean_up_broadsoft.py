@@ -10,33 +10,40 @@ ITEST_BROADWORKS_API = ITestBroadworksAPI(host=HOST,
                                           password=PASSWORD)
 
 
-def delete_user_schedules(phone_number):
-    ITEST_BROADWORKS_API.delete_user_schedules(phone_number=phone_number)
+def delete_all_user_schedules(phone_number):
+    ITEST_BROADWORKS_API.delete_all_user_schedules(phone_number=phone_number)
 
 
 def disable_anonymous_rejection(phone_number):
-    ITEST_BROADWORKS_API.disable_anonymous_rejection(phone_number=phone_number)
+    ITEST_BROADWORKS_API.set_user_anonymous_rejection(phone_number=phone_number,
+                                                      is_active=False)
 
 
 def enable_calling_name_delivery(phone_number):
-    ITEST_BROADWORKS_API.enable_calling_name_delivery(phone_number=phone_number)
+    ITEST_BROADWORKS_API.set_user_calling_name_delivery(phone_number=phone_number,
+                                                        is_active_for_external_calls=True,
+                                                        is_active_for_internal_calls=True)
 
 
 def enable_calling_name_retrieval(phone_number):
-    ITEST_BROADWORKS_API.enable_calling_name_retrieval(phone_number=phone_number)
+    ITEST_BROADWORKS_API.set_user_calling_name_retrieval(phone_number=phone_number,
+                                                         is_active=True)
 
 
 def enable_calling_number_delivery(phone_number):
-    ITEST_BROADWORKS_API.enable_calling_number_delivery(phone_number=phone_number)
+    ITEST_BROADWORKS_API.set_user_calling_number_delivery(phone_number=phone_number,
+                                                          is_active_for_internal_calls=True,
+                                                          is_active_for_external_calls=True)
 
 
 def disable_call_forwarding_always(phone_number):
-    ITEST_BROADWORKS_API.disable_call_forwarding_always(phone_number=phone_number)
+    ITEST_BROADWORKS_API.set_user_call_forwarding_always(phone_number=phone_number,
+                                                         is_active=False)
 
 
 def disable_call_forwarding_busy(phone_number):
-    ITEST_BROADWORKS_API.set_call_forwarding_busy(phone_number=phone_number,
-                                                  is_active=False)
+    ITEST_BROADWORKS_API.set_user_call_forwarding_busy(phone_number=phone_number,
+                                                       is_active=False)
 
 
 def disable_call_forwarding_no_answer(phone_number):
