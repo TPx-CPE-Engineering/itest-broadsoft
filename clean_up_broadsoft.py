@@ -177,7 +177,7 @@ def delete_all_group_auth_codes_codes_managements(enterprise_name, group_name):
     # and extract code names needed to delete them
     group_account_authorization_codes = xmltodict.parse(response)
 
-    codes = group_account_authorization_codes['BroadsoftDocument']['command'].get('codeEntry', None)
+    codes = group_account_authorization_codes['BroadsoftDocument']['command'].get('codeEntry', [])
 
     # Delete every code
     for code in codes:
