@@ -85,10 +85,6 @@ def delete_all_user_sequential_rings(phone_number):
     ITEST_BROADWORKS_API.delete_all_user_sequential_rings(phone_number=phone_number)
 
 
-def delete_all_user_simultaneous_ring_personal(phone_number):
-    ITEST_BROADWORKS_API.delete_all_user_simultaneous_ring_personal(phone_number=phone_number)
-
-
 def disable_user_simultaneous_ring_personal(phone_number):
     ITEST_BROADWORKS_API.set_all_user_simultaneous_ring_personal(phone_number=phone_number,
                                                                  is_active=False)
