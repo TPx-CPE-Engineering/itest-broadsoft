@@ -1,4 +1,4 @@
-from broadworks_ocip import BroadworksAPI
+from broadworks_ocip import BroadworksAPI, OCIErrorResponse
 import broadworks_ocip.types as broadsoft_types
 import time
 
@@ -158,10 +158,14 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserCallForwardingNotReachableModifyRequest',
-                            user_id=user_id,
-                            is_active=is_active,
-                            forward_to_phone_number=forward_to_phone_number)
+        try:
+            return self.command('UserCallForwardingNotReachableModifyRequest',
+                                user_id=user_id,
+                                is_active=is_active,
+                                forward_to_phone_number=forward_to_phone_number)
+        except OCIErrorResponse as e:
+            print(e)
+            return None
 
     def set_user_do_not_disturb(self, phone_number, is_active:bool, ring_splash:bool = None):
         """
