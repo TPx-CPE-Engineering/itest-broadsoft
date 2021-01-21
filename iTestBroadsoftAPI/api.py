@@ -299,8 +299,11 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        selective_call_acceptance = self.command('UserSelectiveCallAcceptanceGetCriteriaListRequest',
-                                                 user_id=user_id)
+        try:
+            selective_call_acceptance = self.command('UserSelectiveCallAcceptanceGetCriteriaListRequest',
+                                                     user_id=user_id)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
         for entry in selective_call_acceptance.criteria_table:
             try:
