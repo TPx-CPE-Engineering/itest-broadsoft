@@ -1,6 +1,5 @@
 from broadworks_ocip import BroadworksAPI, OCIErrorResponse
 import broadworks_ocip.types as broadsoft_types
-import time
 
 
 class ITestBroadworksAPI(BroadworksAPI):
@@ -8,6 +7,11 @@ class ITestBroadworksAPI(BroadworksAPI):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    @staticmethod
+    def parse_broadsoft_error(error):
+        print(f"Broadsoft OCI API Error Response: {error.message}")
+        return
 
     def delete_all_user_schedules(self, phone_number):
         """
@@ -24,6 +28,7 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         # if theres no schedules return
         if not response.schedule_name:
+            print(f'No User Schedules for: {phone_number}')
             return
 
         schedule_keys_to_del = []
@@ -32,9 +37,12 @@ class ITestBroadworksAPI(BroadworksAPI):
                                                     schedule_type=schedule_type))
 
         for key in schedule_keys_to_del:
-            self.command('UserScheduleDeleteListRequest',
-                         user_id=user_id,
-                         schedule_key=key)
+            try:
+                self.command('UserScheduleDeleteListRequest',
+                             user_id=user_id,
+                             schedule_key=key)
+            except OCIErrorResponse as e:
+                self.parse_broadsoft_error(error=e)
 
     def set_user_anonymous_rejection(self, phone_number, is_active:bool):
         """
@@ -46,9 +54,12 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserAnonymousCallRejectionModifyRequest',
-                            user_id=user_id,
-                            is_active=is_active)
+        try:
+            return self.command('UserAnonymousCallRejectionModifyRequest',
+                                user_id=user_id,
+                                is_active=is_active)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
     def set_user_calling_name_delivery(self, phone_number, is_active_for_external_calls:bool,
                                        is_active_for_internal_calls:bool):
@@ -62,10 +73,13 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserCallingNameDeliveryModifyRequest',
-                            user_id=user_id,
-                            is_active_for_external_calls=is_active_for_external_calls,
-                            is_active_for_internal_calls=is_active_for_internal_calls)
+        try:
+            return self.command('UserCallingNameDeliveryModifyRequest',
+                                user_id=user_id,
+                                is_active_for_external_calls=is_active_for_external_calls,
+                                is_active_for_internal_calls=is_active_for_internal_calls)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
     def set_user_calling_name_retrieval(self, phone_number, is_active:bool):
         """
@@ -77,9 +91,12 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserCallingNameRetrievalModifyRequest',
-                            user_id=user_id,
-                            is_active=is_active)
+        try:
+            return self.command('UserCallingNameRetrievalModifyRequest',
+                                user_id=user_id,
+                                is_active=is_active)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
     def set_user_calling_number_delivery(self, phone_number, is_active_for_external_calls:bool,
                                          is_active_for_internal_calls:bool):
@@ -92,11 +109,13 @@ class ITestBroadworksAPI(BroadworksAPI):
         """
 
         user_id = phone_number + self.domain
-
-        return self.command('UserCallingNumberDeliveryModifyRequest',
-                            user_id=user_id,
-                            is_active_for_external_calls=is_active_for_external_calls,
-                            is_active_for_internal_calls=is_active_for_internal_calls)
+        try:
+            return self.command('UserCallingNumberDeliveryModifyRequest',
+                                user_id=user_id,
+                                is_active_for_external_calls=is_active_for_external_calls,
+                                is_active_for_internal_calls=is_active_for_internal_calls)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
     def set_user_call_forwarding_always(self, phone_number, is_active:bool):
         """
@@ -108,9 +127,12 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserCallForwardingAlwaysModifyRequest',
-                            user_id=user_id,
-                            is_active=is_active)
+        try:
+            return self.command('UserCallForwardingAlwaysModifyRequest',
+                                user_id=user_id,
+                                is_active=is_active)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
     def set_user_call_forwarding_busy(self, phone_number, is_active:bool, forward_to_phone_number:str = None):
         """
@@ -123,10 +145,13 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserCallForwardingBusyModifyRequest',
-                            user_id=user_id,
-                            is_active=is_active,
-                            forward_to_phone_number=forward_to_phone_number)
+        try:
+            return self.command('UserCallForwardingBusyModifyRequest',
+                                user_id=user_id,
+                                is_active=is_active,
+                                forward_to_phone_number=forward_to_phone_number)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
     def set_user_call_forwarding_no_answer(self, phone_number, is_active:bool, forward_to_phone_number:str = None,
                                            number_of_rings:int = None):
@@ -141,11 +166,14 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserCallForwardingNoAnswerModifyRequest',
-                            user_id=user_id,
-                            is_active=is_active,
-                            forward_to_phone_number=forward_to_phone_number,
-                            number_of_rings=number_of_rings)
+        try:
+            return self.command('UserCallForwardingNoAnswerModifyRequest',
+                                user_id=user_id,
+                                is_active=is_active,
+                                forward_to_phone_number=forward_to_phone_number,
+                                number_of_rings=number_of_rings)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
     def set_user_call_forwarding_not_reachable(self, phone_number, is_active:bool, forward_to_phone_number:str = None):
         """
@@ -164,8 +192,7 @@ class ITestBroadworksAPI(BroadworksAPI):
                                 is_active=is_active,
                                 forward_to_phone_number=forward_to_phone_number)
         except OCIErrorResponse as e:
-            print(e)
-            return None
+            return self.parse_broadsoft_error(error=e)
 
     def set_user_do_not_disturb(self, phone_number, is_active:bool, ring_splash:bool = None):
         """
@@ -178,10 +205,13 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserDoNotDisturbModifyRequest',
-                            user_id=user_id,
-                            is_active=is_active,
-                            ring_splash=ring_splash)
+        try:
+            return self.command('UserDoNotDisturbModifyRequest',
+                                user_id=user_id,
+                                is_active=is_active,
+                                ring_splash=ring_splash)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
     def set_user_external_calling_line_id_delivery(self, phone_number, is_active:bool):
         """
@@ -193,9 +223,12 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserExternalCallingLineIDDeliveryModifyRequest',
-                            user_id=user_id,
-                            is_active=is_active)
+        try:
+            return self.command('UserExternalCallingLineIDDeliveryModifyRequest',
+                                user_id=user_id,
+                                is_active=is_active)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
     def set_user_internal_calling_line_id_delivery(self, phone_number, is_active:bool):
         """
@@ -207,9 +240,12 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserInternalCallingLineIDDeliveryModifyRequest',
-                            user_id=user_id,
-                            is_active=is_active)
+        try:
+            return self.command('UserInternalCallingLineIDDeliveryModifyRequest',
+                                user_id=user_id,
+                                is_active=is_active)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
     def set_user_call_forwarding_selective(self, phone_number, is_active:bool,
                                            default_forward_to_phone_number:str = None, play_ring_reminder:bool = None,
@@ -226,12 +262,15 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserCallForwardingSelectiveModifyRequest',
-                            user_id=user_id,
-                            is_active=is_active,
-                            default_forward_to_phone_number=default_forward_to_phone_number,
-                            play_ring_reminder=play_ring_reminder,
-                            criteria_activation=criteria_activation)
+        try:
+            return self.command('UserCallForwardingSelectiveModifyRequest',
+                                user_id=user_id,
+                                is_active=is_active,
+                                default_forward_to_phone_number=default_forward_to_phone_number,
+                                play_ring_reminder=play_ring_reminder,
+                                criteria_activation=criteria_activation)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
     def set_user_selective_acceptance(self, phone_number,
                                       criteria_activation:[broadsoft_types.CriteriaActivation] = None):
@@ -244,9 +283,12 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserSelectiveCallAcceptanceModifyActiveCriteriaListRequest',
-                            user_id=user_id,
-                            criteria_activation=criteria_activation)
+        try:
+            return self.command('UserSelectiveCallAcceptanceModifyActiveCriteriaListRequest',
+                                user_id=user_id,
+                                criteria_activation=criteria_activation)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
     def delete_all_user_selective_acceptance(self, phone_number):
         """
@@ -261,9 +303,12 @@ class ITestBroadworksAPI(BroadworksAPI):
                                                  user_id=user_id)
 
         for entry in selective_call_acceptance.criteria_table:
-            self.command('UserSelectiveCallAcceptanceDeleteCriteriaRequest',
-                         user_id=user_id,
-                         criteria_name=entry[1])
+            try:
+                self.command('UserSelectiveCallAcceptanceDeleteCriteriaRequest',
+                             user_id=user_id,
+                             criteria_name=entry[1])
+            except OCIErrorResponse as e:
+                self.parse_broadsoft_error(error=e)
 
     def delete_all_user_sequential_rings(self, phone_number):
         """
@@ -278,9 +323,12 @@ class ITestBroadworksAPI(BroadworksAPI):
                                         user_id=user_id)
 
         for entry in sequential_rings.criteria_table:
-            self.command('UserSequentialRingDeleteCriteriaRequest',
-                         user_id=user_id,
-                         criteria_name=entry[1])
+            try:
+                self.command('UserSequentialRingDeleteCriteriaRequest',
+                             user_id=user_id,
+                             criteria_name=entry[1])
+            except OCIErrorResponse as e:
+                self.parse_broadsoft_error(error=e)
 
     def set_all_user_simultaneous_ring_personal(self, phone_number, is_active:bool, incoming_calls:str = None,
                                                 sim_ring_phone_number_list:
@@ -296,11 +344,14 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserSimultaneousRingPersonalModifyRequest',
-                            user_id=user_id,
-                            is_active=is_active,
-                            incoming_calls=incoming_calls,
-                            sim_ring_phone_number_list=sim_ring_phone_number_list)
+        try:
+            return self.command('UserSimultaneousRingPersonalModifyRequest',
+                                user_id=user_id,
+                                is_active=is_active,
+                                incoming_calls=incoming_calls,
+                                sim_ring_phone_number_list=sim_ring_phone_number_list)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
     def set_user_calling_line_id_delivery(self, phone_number, is_active:bool):
         """
@@ -312,9 +363,12 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserCallingLineIDDeliveryBlockingModifyRequest',
-                            user_id=user_id,
-                            is_active=is_active)
+        try:
+            return self.command('UserCallingLineIDDeliveryBlockingModifyRequest',
+                                user_id=user_id,
+                                is_active=is_active)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
     def delete_all_user_speed_dial_100(self, phone_number):
         """
@@ -331,9 +385,12 @@ class ITestBroadworksAPI(BroadworksAPI):
         while speed_dial_100.speed_dial_entry:
             speed_code = speed_dial_100.speed_dial_entry.speed_code
 
-            self.command('UserSpeedDial100DeleteListRequest',
-                         user_id=user_id,
-                         speed_code=speed_code)
+            try:
+                self.command('UserSpeedDial100DeleteListRequest',
+                             user_id=user_id,
+                             speed_code=speed_code)
+            except OCIErrorResponse as e:
+                self.parse_broadsoft_error(error=e)
 
             speed_dial_100 = self.command('UserSpeedDial100GetListRequest',
                                           user_id=user_id)
@@ -349,10 +406,13 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserCallWaitingModifyRequest',
-                            user_id=user_id,
-                            is_active=is_active,
-                            disable_calling_line_id_delivery=disable_calling_line_id_delivery)
+        try:
+            return self.command('UserCallWaitingModifyRequest',
+                                user_id=user_id,
+                                is_active=is_active,
+                                disable_calling_line_id_delivery=disable_calling_line_id_delivery)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
     def set_user_music_on_hold(self, phone_number, is_active:bool):
         """
@@ -364,9 +424,12 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserMusicOnHoldModifyRequest',
-                            user_id=user_id,
-                            is_active=is_active)
+        try:
+            return self.command('UserMusicOnHoldModifyRequest',
+                                user_id=user_id,
+                                is_active=is_active)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
 
     def set_user_incoming_calling_plan(self, phone_number, use_custom_settings:bool):
         """
@@ -378,6 +441,9 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        return self.command('UserIncomingCallingPlanModifyRequest',
-                            user_id=user_id,
-                            use_custom_settings=use_custom_settings)
+        try:
+            return self.command('UserIncomingCallingPlanModifyRequest',
+                                user_id=user_id,
+                                use_custom_settings=use_custom_settings)
+        except OCIErrorResponse as e:
+            return self.parse_broadsoft_error(error=e)
