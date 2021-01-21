@@ -322,8 +322,13 @@ class ITestBroadworksAPI(BroadworksAPI):
 
         user_id = phone_number + self.domain
 
-        sequential_rings = self.command('UserSequentialRingGetRequest13mp16',
-                                        user_id=user_id)
+        sequential_rings = None
+
+        try:
+            sequential_rings = self.command('UserSequentialRingGetRequest13mp16',
+                                            user_id=user_id)
+        except OCIErrorResponse as e:
+            self.parse_broadsoft_error(error=e)
 
         for entry in sequential_rings.criteria_table:
             try:
