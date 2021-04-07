@@ -139,6 +139,9 @@ def delete_all_group_schedules(enterprise_name, group_name):
                                             service_provider_id=enterprise_name,
                                             group_id=group_name)
 
+    if response.schedule_name is None:
+        return
+
     schedule_keys_to_del = []
     for schedule_name, schedule_type in zip(response.schedule_name, response.schedule_type):
         schedule_keys_to_del.append(ITEST_BROADWORKS_API.get_type_object('ScheduleKey',
@@ -146,6 +149,22 @@ def delete_all_group_schedules(enterprise_name, group_name):
                                                                          schedule_type=schedule_type))
 
     for key in schedule_keys_to_del:
+        # Get events in each schedule
+        response = ITEST_BROADWORKS_API.command('GroupScheduleGetEventListRequest',
+                                                service_provider_id=enterprise_name,
+                                                group_id=group_name,
+                                                schedule_key=key)
+        events = response.event_name
+        # Delete every event within each schedule before deleting schedules
+        if events is not None:
+            for event_name in events:
+                ITEST_BROADWORKS_API.command('GroupScheduleDeleteEventListRequest',
+                                             service_provider_id=enterprise_name,
+                                             group_id=group_name,
+                                             schedule_key=key,
+                                             event_name=event_name)
+
+        # Delete schedule
         ITEST_BROADWORKS_API.command('GroupScheduleDeleteListRequest',
                                      service_provider_id=enterprise_name,
                                      group_id=group_name,
@@ -303,5 +322,18 @@ def set_enterprise_voice_vpn(enterprise_name):
                                  policy_selection='Public')
 
 
+def delete_user_incoming_calls_call_forwarding_selective(phone_number):
+    user_id = phone_number + ITEST_BROADWORKS_API.domain
+    response = ITEST_BROADWORKS_API.command("UserCallForwardingSelectiveGetRequest",
+                                            user_id=user_id)
+
+    for criteria in response.criteria_table:
+        ITEST_BROADWORKS_API.command('UserCallForwardingSelectiveDeleteCriteriaRequest',
+                                     user_id=user_id,
+                                     criteria_name=criteria.criteria_name)
+
+
 if __name__ == '__main__':
-    delete_all_user_schedules(phone_number='7025634891')
+    # delete_all_user_schedules(phone_number='7025634891')
+    delete_user_incoming_calls_call_forwarding_selective(phone_number='7028534880')
+    delete_all_group_schedules(enterprise_name='TPAC-LabG6-2', group_name='iTest_Trunk')
