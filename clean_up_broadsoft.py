@@ -175,7 +175,8 @@ def set_group_call_processing(enterprise_name, group_name):
     ITEST_BROADWORKS_API.command('GroupCallProcessingModifyPolicyRequest15sp2',
                                  service_provider_id=enterprise_name,
                                  group_id=group_name,
-                                 use_group_clid_setting=False)
+                                 use_group_clid_setting=False,
+                                 use_group_name=False)
 
 
 def set_group_auth_codes_administration(enterprise_name, group_name):
