@@ -334,6 +334,13 @@ def delete_user_incoming_calls_call_forwarding_selective(phone_number):
                                      criteria_name=criteria.criteria_name)
 
 
+def delete_group_series_completion_groups(enterprise_name, group_name):
+    response = ITEST_BROADWORKS_API.command('GroupSeriesCompletionGetInstanceListRequest', service_provider_id=enterprise_name, group_id=group_name)
+
+    for name in response.name:
+        ITEST_BROADWORKS_API.command('GroupSeriesCompletionDeleteInstanceRequest', service_provider_id=enterprise_name, group_id=group_name, name=name)
+
+
 if __name__ == '__main__':
     # delete_all_user_schedules(phone_number='7025634891')
     delete_user_incoming_calls_call_forwarding_selective(phone_number='7028534880')
